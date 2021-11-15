@@ -3,6 +3,10 @@ package com.mycompany.practica9diu;
 import java.util.Arrays;
 import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -15,6 +19,14 @@ public class Practica9 extends javax.swing.JFrame {
     DefaultListModel modeloTabla= new DefaultListModel();
     DefaultListModel modeloCampos= new DefaultListModel();
     int n=1;
+    private EnterDB entradaDB;
+    private final String serverName="I7-lab5.dis.ulpgc.es";;
+    private final String databaseName="DIU_BD";
+    private final String usuarioCorrecto="estudiante-DIU";
+    private final String claveCorrecta="Diu_2021_22";
+    private String user,pass;
+
+
     public Practica9() {
         initComponents();
         setLocationRelativeTo(null);
@@ -22,6 +34,7 @@ public class Practica9 extends javax.swing.JFrame {
         tablasLista.setModel(modeloTabla);
         camposLista.setModel(modeloCampos);
         tablasLista.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        conExitoLabel.setVisible(false);
     }
 
 
@@ -42,7 +55,7 @@ public class Practica9 extends javax.swing.JFrame {
         delBtn = new javax.swing.JButton();
         showBtn = new javax.swing.JButton();
         usuarioLabel = new javax.swing.JLabel();
-        usuariofield = new javax.swing.JTextField();
+        usuarioField = new javax.swing.JTextField();
         selectModeLabel = new javax.swing.JLabel();
         deselectBtn = new javax.swing.JButton();
         JScrollPane2 = new javax.swing.JScrollPane();
@@ -50,6 +63,7 @@ public class Practica9 extends javax.swing.JFrame {
         tablasLabel = new javax.swing.JLabel();
         tituloLabel = new javax.swing.JLabel();
         camposLabel = new javax.swing.JLabel();
+        conExitoLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,6 +93,7 @@ public class Practica9 extends javax.swing.JFrame {
         });
 
         grupoBtn.add(multIntervalBtn);
+        multIntervalBtn.setSelected(true);
         multIntervalBtn.setText("Intervalo múltiple");
         multIntervalBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -132,58 +147,60 @@ public class Practica9 extends javax.swing.JFrame {
         camposLabel.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
         camposLabel.setText("Campos");
 
+        conExitoLabel.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
+        conExitoLabel.setForeground(new java.awt.Color(51, 255, 0));
+        conExitoLabel.setText("¡Conectado correctamente!");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(camposLabel)
+                .addGap(295, 295, 295))
             .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(passLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(usuarioLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(usuariofield, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(tituloLabel))
-                        .addGap(18, 18, 18)
-                        .addComponent(loginBtn))
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(simpleSelectBtn)
+                            .addComponent(multIntervalBtn)
+                            .addComponent(unicIntervalBtn)))
+                    .addComponent(selectModeLabel))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(deselectBtn)
+                    .addComponent(tablasLabel)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(22, 22, 22)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(simpleSelectBtn)
-                                    .addComponent(multIntervalBtn)
-                                    .addComponent(unicIntervalBtn)))
-                            .addComponent(selectModeLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(showBtn))
-                            .addComponent(deselectBtn)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addComponent(tablasLabel)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(51, 51, 51)
-                                .addComponent(JScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(118, 118, 118)
-                                .addComponent(camposLabel)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(showBtn)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addComponent(JScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(229, 229, 229))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(passLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(usuarioLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(usuarioField, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tituloLabel))
+                .addGap(18, 18, 18)
+                .addComponent(loginBtn)
+                .addGap(18, 18, 18)
+                .addComponent(conExitoLabel)
+                .addGap(179, 179, 179)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(addBtn)
                     .addComponent(delBtn))
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -201,48 +218,96 @@ public class Practica9 extends javax.swing.JFrame {
                     .addComponent(addBtn)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(usuariofield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(usuarioField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(usuarioLabel))
                         .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(passLabel)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(loginBtn)))
-                .addGap(61, 61, 61)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tablasLabel)
-                    .addComponent(camposLabel))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(11, 11, 11)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(loginBtn)
+                            .addComponent(conExitoLabel))))
+                .addGap(24, 24, 24)
+                .addComponent(camposLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(showBtn))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addComponent(tablasLabel)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(selectModeLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(simpleSelectBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(unicIntervalBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(multIntervalBtn))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                                .addComponent(JScrollPane2)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deselectBtn)
-                .addContainerGap(46, Short.MAX_VALUE))
+                                .addGap(7, 7, 7)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(32, 32, 32)
+                                        .addComponent(selectModeLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(simpleSelectBtn)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(unicIntervalBtn)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(multIntervalBtn))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(67, 67, 67)
+                                .addComponent(showBtn)))
+                        .addGap(53, 53, 53)
+                        .addComponent(deselectBtn))
+                    .addComponent(JScrollPane2))
+                .addGap(18, 30, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    private void loadTables(){
+        try{
+            ArrayList<String> tables= entradaDB.getTables();
+            Iterator iter = tables.iterator();
+             while(iter.hasNext()){
+                modeloTabla.addElement(iter.next());
+            }
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(rootPane, "Error al acceder al servidor"
+                        , "AYUDA", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    private void loadFields(String[]tablasSeleccionadas){
+        try {
+            ArrayList<String> fields = entradaDB.getFields(tablasSeleccionadas);
+            Iterator iter = fields.iterator();
+            while(iter.hasNext()){
+                modeloCampos.addElement(iter.next());
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(rootPane, "Error al enviar la consulta"
+                        , "AYUDA", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        char[] pass= passField.getPassword();
-        System.out.println("Contraseña: "+ String.valueOf(pass));
+        try{
+            char[] passC= passField.getPassword();
+            pass=String.valueOf(passC);
+            user=usuarioField.getText();
+            System.out.println("Usuario: " + user +   " Contraseña: "+ String.valueOf(passC));
+            entradaDB = new EnterDB(serverName, databaseName, user, pass);
+            entradaDB.connectDB();
+            conExitoLabel.setVisible(true);
+            loadTables();
+            
+        }catch(ClassNotFoundException ex){
+            JOptionPane.showMessageDialog(rootPane, "Error b1231312x2131241",
+                     "ERROR", JOptionPane.ERROR_MESSAGE);
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(rootPane, "El usuario o la contraseña son incorrectos.\n"
+                    + "Asegúrate de que son correctos.",
+                     "Error de autenticación", JOptionPane.ERROR_MESSAGE);
+        }
+       
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
@@ -262,7 +327,13 @@ public class Practica9 extends javax.swing.JFrame {
     private void showBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showBtnActionPerformed
         int [] selected=tablasLista.getSelectedIndices();
         System.out.println("Posiciones seleccionadas: " + Arrays.toString(selected));
-        tablasLista.clearSelection();
+        String[] tablasSeleccionadas = new String[selected.length];
+        
+        for(int i=0;i<selected.length;i++){
+            tablasSeleccionadas[i] = (String) modeloTabla.getElementAt(selected[i]);
+        }
+        //tablasLista.clearSelection();
+        loadFields(tablasSeleccionadas);
     }//GEN-LAST:event_showBtnActionPerformed
 
     private void simpleSelectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpleSelectBtnActionPerformed
@@ -328,6 +399,7 @@ public class Practica9 extends javax.swing.JFrame {
     private javax.swing.JButton addBtn;
     private javax.swing.JLabel camposLabel;
     private javax.swing.JList<String> camposLista;
+    private javax.swing.JLabel conExitoLabel;
     private javax.swing.JButton delBtn;
     private javax.swing.JButton deselectBtn;
     private javax.swing.ButtonGroup grupoBtn;
@@ -343,7 +415,7 @@ public class Practica9 extends javax.swing.JFrame {
     private javax.swing.JList<String> tablasLista;
     private javax.swing.JLabel tituloLabel;
     private javax.swing.JToggleButton unicIntervalBtn;
+    private javax.swing.JTextField usuarioField;
     private javax.swing.JLabel usuarioLabel;
-    private javax.swing.JTextField usuariofield;
     // End of variables declaration//GEN-END:variables
 }
